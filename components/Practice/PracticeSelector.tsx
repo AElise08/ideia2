@@ -1,9 +1,11 @@
 import React from 'react';
 import { Clock, BookOpen, Volume2 } from 'lucide-react';
 import { PracticeMode } from '../../types';
+import MissionBanner from './MissionBanner';
 
 interface PracticeSelectorProps {
   onSelectMode: (mode: PracticeMode) => void;
+  mission?: string; // missão que veio do "Treinar o foco" (opcional).
 }
 
 // Os três modos de prática. Cada card leva pro fluxo correspondente.
@@ -33,9 +35,14 @@ const MODES: {
   },
 ];
 
-const PracticeSelector: React.FC<PracticeSelectorProps> = ({ onSelectMode }) => {
+const PracticeSelector: React.FC<PracticeSelectorProps> = ({ onSelectMode, mission }) => {
   return (
     <div className="w-full max-w-5xl mx-auto animate-fadeInUp">
+      {mission && (
+        <div className="max-w-3xl mx-auto">
+          <MissionBanner mission={mission} />
+        </div>
+      )}
       <h2 className="text-3xl font-bold text-white mb-8 text-center tracking-tight">Modo de Prática</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {MODES.map(({ mode, title, desc, icon }) => (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import InputSection from './components/InputSection';
+import SpeechLine from './components/SpeechLine';
 import AnalyzingOverlay from './components/AnalyzingOverlay';
 import { analyzeSpeech, AnalyzeError } from './services/geminiService';
 import { AnalysisResult, AppState, HistoryItem, View, PracticeMode, MetricKey, SectionMarker, SpeechPart } from './types';
@@ -63,6 +64,9 @@ const App: React.FC = () => {
   // Quando refazendo: id do discurso original + texto pra pré-preencher o InputSection.
   const [retryOfId, setRetryOfId] = useState<string | null>(null);
   const [pendingRetryText, setPendingRetryText] = useState<string | null>(null);
+  // Missão que viaja do "Treinar o foco" pra dentro da prática — pra pessoa não
+  // cair no seletor sem saber o que veio treinar. Limpa em nova análise / Home.
+  const [pendingMission, setPendingMission] = useState<{ text: string; focusArea?: MetricKey } | null>(null);
 
   useEffect(() => {
     // Histórico é 100% local (sem login): lê o localStorage na entrada.
@@ -139,6 +143,7 @@ const App: React.FC = () => {
       setCurrentResultId(id);
       setRetryOfId(null);       // consumido — a próxima análise só encadeia se refazer de novo.
       setPendingRetryText(null);
+      setPendingMission(null);  // missão cumprida (ou substituída) — some da prática.
     } catch (err: any) {
       console.error('[demostenes] analyze error:', err);
       // Mapeia primeiro por TIPO (status/code do AnalyzeError) e só depois por
@@ -184,8 +189,16 @@ const App: React.FC = () => {
     setAppState(AppState.IDLE);
   };
 
-  // "Treinar o foco": leva pro modo de prática.
+  // "Treinar o foco": leva pro modo de prática LEVANDO a missão junto. Sem isso a
+  // pessoa cai no seletor sem saber o que treinar. Lê o resultado atual antes de
+  // limpá-lo; se não há missão sugerida, navega com null (como antes).
   const handleTrainWeak = () => {
+    const r = analysisResult;
+    setPendingMission(
+      r?.suggestedMission
+        ? { text: r.suggestedMission, focusArea: r.focusArea }
+        : null
+    );
     setCurrentView(View.PRACTICE);
     setPracticeMode(null);
     setAnalysisResult(null);
@@ -238,15 +251,15 @@ const App: React.FC = () => {
 
     if (currentView === View.PRACTICE) {
       if (practiceMode === PracticeMode.TIMED) {
-        return <TimedPractice onBack={() => setPracticeMode(null)} onAnalyze={handleAnalyze} />;
+        return <TimedPractice onBack={() => setPracticeMode(null)} onAnalyze={handleAnalyze} mission={pendingMission?.text} />;
       }
       if (practiceMode === PracticeMode.SECTION) {
-        return <SectionPractice onBack={() => setPracticeMode(null)} onAnalyze={handleAnalyze} />;
+        return <SectionPractice onBack={() => setPracticeMode(null)} onAnalyze={handleAnalyze} mission={pendingMission?.text} />;
       }
       if (practiceMode === PracticeMode.DICTION) {
         return <DictionPractice onBack={() => setPracticeMode(null)} onAnalyze={handleAnalyze} />;
       }
-      return <PracticeSelector onSelectMode={setPracticeMode} />;
+      return <PracticeSelector onSelectMode={setPracticeMode} mission={pendingMission?.text} />;
     }
 
     // Reconhecimento do retornante: undefined = visitante novo (mantém o convite
@@ -302,6 +315,8 @@ const App: React.FC = () => {
               isRetry={pendingRetryText !== null}
               onCancelRetry={handleReset}
             />
+            {/* Home parada: explica as 5 partes que o app avalia. */}
+            {appState === AppState.IDLE && <SpeechLine />}
           </section>
         )}
 
@@ -339,6 +354,7 @@ const App: React.FC = () => {
         onHomeClick={() => {
           setCurrentView(View.HOME);
           setAppState(AppState.IDLE);
+          setPendingMission(null); // volta pra home = missão descartada.
         }}
         onJourneyClick={() => {
           setShowHistory(false);

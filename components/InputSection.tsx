@@ -1,7 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mic, Send, Sparkles, AlertTriangle, Trash2, Flag, GraduationCap, RotateCcw, X } from 'lucide-react';
-import { SectionMarker } from '../types';
+import { SectionMarker, SpeechPart } from '../types';
+import { SPEECH_PARTS } from '../constants/speechParts';
 import { convertToWav, blobToBase64 } from '../utils/audioWav';
+
+// Cor de cada marcador das 5 partes. Os rótulos vêm de SPEECH_PARTS (fonte de
+// verdade única) — aqui fica só a cor de cada etapa na hora de marcar ao vivo.
+const MARKER_COLORS: Record<SpeechPart, string> = {
+  cumprimento: 'text-sky-400',
+  conquista: 'text-lime-400',
+  preparacao: 'text-amber-400',
+  desenvolvimento: 'text-green-400',
+  conclusao: 'text-purple-400',
+};
 
 interface InputSectionProps {
   onAnalyze: (input: { text?: string; audioBase64?: string; mimeType?: string; markers?: SectionMarker[]; isProfessorMode?: boolean }) => void;
@@ -197,19 +208,13 @@ const InputSection: React.FC<InputSectionProps> = ({ onAnalyze, isAnalyzing, ini
                     {/* Marcadores das 5 PARTES do discurso (método clássico de
                         oratória): marque cada momento pra receber feedback por parte. */}
                     <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-4 w-full max-w-xl">
-                      {[
-                        { label: 'Cumprimento', color: 'text-sky-400' },
-                        { label: 'Conquista', color: 'text-lime-400' },
-                        { label: 'Preparação', color: 'text-amber-400' },
-                        { label: 'Desenvolvimento', color: 'text-green-400' },
-                        { label: 'Conclusão', color: 'text-purple-400' },
-                      ].map(({ label, color }) => (
+                      {SPEECH_PARTS.map(({ key, label }) => (
                         <button
-                          key={label}
+                          key={key}
                           onClick={() => addMarker(label)}
                           className="px-3 py-2.5 sm:py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg text-xs font-medium text-zinc-300 hover:text-white transition-colors flex items-center"
                         >
-                          <Flag className={`w-3 h-3 mr-2 ${color}`} /> {label}
+                          <Flag className={`w-3 h-3 mr-2 ${MARKER_COLORS[key]}`} /> {label}
                         </button>
                       ))}
                     </div>

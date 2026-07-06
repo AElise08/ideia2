@@ -22,7 +22,7 @@ interface DictionExercise {
 // aproveitado do guia de treino de dicção do app.
 const EXERCISES: DictionExercise[] = [
   // --- Leve: aquecimento e sons simples ---
-  { id: 'p1', level: 'leve', sound: 'Som P', text: 'O peito do pé de Pedro é preto.' },
+  { id: 'p1', level: 'leve', sound: 'Som P', text: 'A pia pinga, o pinto pia. Quanto mais a pia pinga, mais o pinto pia.' },
   { id: 's1', level: 'leve', sound: 'Som S (assobio)', text: 'Sabia que o sabiá sabia assobiar? O sabiá sabia.' },
   { id: 'c1', level: 'leve', sound: 'Sons C e CH', text: 'Casa suja, chão sujo. Chão sujo, casa suja.' },
   { id: 'art1', level: 'leve', sound: 'Articulação', text: 'Fale devagar e articule cada palavra: o rei, a rainha e o pequeno príncipe.' },

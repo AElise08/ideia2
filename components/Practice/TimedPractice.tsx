@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Mic, Square, Play, RefreshCw, ArrowLeft, Send, Sparkles } from 'lucide-react';
 import { useAudioRecorder } from '../../hooks/useAudioRecorder';
 import { convertToWav, blobToBase64 } from '../../utils/audioWav';
+import MissionBanner from './MissionBanner';
 
 interface TimedPracticeProps {
   onBack: () => void;
   onAnalyze: (input: { audioBase64: string; mimeType: string }) => void;
+  mission?: string; // missão que veio do "Treinar o foco" (opcional).
 }
 
 const TOPICS = [
@@ -36,7 +38,7 @@ const TOPICS = [
   "O impacto do trabalho remoto na produtividade"
 ];
 
-const TimedPractice: React.FC<TimedPracticeProps> = ({ onBack, onAnalyze }) => {
+const TimedPractice: React.FC<TimedPracticeProps> = ({ onBack, onAnalyze, mission }) => {
   const [topic, setTopic] = useState(TOPICS[0]);
   const [timeLeft, setTimeLeft] = useState(60); // 60 seconds default
   const [duration, setDuration] = useState(60);
@@ -117,6 +119,9 @@ const TimedPractice: React.FC<TimedPracticeProps> = ({ onBack, onAnalyze }) => {
         <ArrowLeft className="w-4 h-4 mr-2" />
         Voltar
       </button>
+
+      {/* Lembrete da missão — fica visível o tempo todo, inclusive gravando. */}
+      {mission && <MissionBanner mission={mission} compact />}
 
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 md:p-8 text-center">
         <h3 className="text-zinc-500 text-sm uppercase tracking-widest font-bold mb-4">Tópico Sugerido</h3>
