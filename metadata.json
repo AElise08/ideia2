@@ -1,0 +1,7 @@
+{
+  "name": "Demosthenes",
+  "description": "Um treinador de oratória com IA que fornece análise em tempo real, feedback retórico e sugestões de melhoria de discurso.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

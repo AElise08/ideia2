@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Vokal">
+  <rect width="64" height="64" rx="15" fill="#a3e635"/>
+  <rect x="14" y="13" width="36" height="10" rx="5" fill="#09090b"/>
+  <rect x="18" y="30" width="6" height="16" rx="3" fill="#09090b"/>
+  <rect x="29" y="26" width="6" height="20" rx="3" fill="#09090b"/>
+  <rect x="40" y="30" width="6" height="16" rx="3" fill="#09090b"/>
+  <rect x="14" y="46" width="36" height="6" rx="3" fill="#09090b"/>
+</svg>
